@@ -140,7 +140,6 @@ const add = () => {
 ]).then( (res) => {
     connection.query(`select * from items where id = ?`, res.itemsList.match(/^\d+/), (err, data) => {
         if (err) throw err
-        console.log(data)
         inquirer
         .prompt([
             {
@@ -152,65 +151,9 @@ const add = () => {
                 // deleting more than it should
             connection.query(`update items set stock_quantity = ? where id = ?`, [data[0].stock_quantity+res.quantity, data[0].id], (err, data) => {
                 if (err) throw err
-                console.log(data)
+                console.log('added')
             })
         })
     })
 })
 }
-    // probably want to move below to a different function
-//     connection.query(`select * from items`, (err, data) => {
-//         if (err) throw err
-//         obj = data
-//         // need to add a for loop
-//         for (let i = 0; i < obj.length; i ++) {
-//         arr = Object.values(obj[i]).join(" ")
-//         newArr.push(arr)
-//         console.log(newArr)
-//         }
-//         arr2 = Object.keys(obj[0]).join(" ")
-//         console.log(arr)
-//         console.log(arr2)
-//         customer()
-//     })
-
-// }
-
-// const customer = () => {
-
-// inquirer
-// .prompt([
-//     {
-//         name: 'itemsList',
-//         type: 'list',
-//         // works but does not line up
-//         message: "Choose an item you'd like to buy \n" + arr2,
-//         choices: newArr
-//     }
-// ]).then( (res) => {
-//     // match the id selected just grabbing the numbers at the start
-//     connection.query(`select * from items where id = ?`, res.itemsList.match(/^\d+/), (err, data) => {
-//         if (err) throw err
-//         console.log(data)
-//         inquirer
-//         .prompt([
-//             {
-//                 name: 'quantity',
-//                 type: 'input',
-//                 message: 'how many '+ data[0].product_name +'(s) would you like to buy?'
-//             }
-//         ]).then( (res) => {
-//             if (data[0].stock_quantity-res.quantity >= 0) {
-//                 // deleting more than it should
-//             connection.query(`update items set stock_quantity = ? where id = ?`, [data[0].stock_quantity-res.quantity, data[0].id], (err, data) => {
-//                 if (err) throw err
-//                 console.log(data)
-//             })
-//         } else {
-//             console.log('insufficient stock')
-//         }
-//         })
-//     })
-// })
-
-// }
