@@ -61,14 +61,14 @@ const createTable = () => {
         } else if (res.menu === 'View Product Sales by Department') {
             connection.query(`select * from departments`, (err, data) => {
                 if (err) throw err
-                arr2 = Object.keys(data[0]).join(" ")
+                // arr2 = Object.keys(data[0]).join(" ")
                 let header = ['department_id', 'department_name', 'over_head_consts', 'product_sales', 'total_profit']
                 console.log(header.join(" "))
                 for (let i = 0; i < data.length; i ++) {
                     arr = Object.values(data[i])
                     arr.push(arr[3]-arr[2])
-                    newArr.push(arr.join(" "))
-                    console.log(newArr.join(" "))
+                    console.log(arr.join(" "))
+                    // console.log(newArr.join(" "))
                     }
             })
         }

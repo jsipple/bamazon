@@ -4,6 +4,7 @@ let obj;
 let arr;
 let arr2;
 let newArr = []
+let departments = []
 const connection = mysql.createConnection({
     host: 'localhost',
     port: 3306,
@@ -84,15 +85,17 @@ const readData = () => {
                 for (let i = 0; i < obj.length; i ++) {
                 arr = Object.values(obj[i]).join(" ")
                 newArr.push(arr)
-                console.log(newArr)
                 }
                 arr2 = Object.keys(obj[0]).join(" ")
-                console.log(arr)
-                console.log(arr2)
                 add()
             })
         
         }else if (res.menu === 'Add New Product') {
+            connection.query(`select * from departments`, (err, data) => {
+                for (let i = 0; i < data.length; i++) {
+                departments.push(data[i].department_name)
+                }
+            })
             inquirer
             .prompt([
                 {
@@ -102,13 +105,14 @@ const readData = () => {
                 },
                 {
                     name: 'department',
-                    type: 'input',
-                    message: 'insert department name'
+                    type: 'list',
+                    message: 'choose department name',
+                    choices: departments
                 },
                 {
                     name: 'price',
                     type: 'input',
-                    message: 'insert price'
+                    message: 'insert price',
                 },
                 {
                     name: 'quantity',
