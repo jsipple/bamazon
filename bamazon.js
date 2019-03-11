@@ -1,9 +1,9 @@
 const mysql = require('mysql')
 const inquirer = require('inquirer')
+// const table = require('console.table')
 let obj;
 let arr;
 let arr2;
-let num;
 let newArr = []
 const connection = mysql.createConnection({
     host: 'localhost',
@@ -33,15 +33,15 @@ const createTable = () => {
 }
 
 const writeData = () => {
-    connection.query(`insert into items (product_name, department_name, price, stock_quantity) value ("computer", "electronics", 499.99, 10)`)
+    
     readData()
 }
 
 const readData = () => {
-    // connection.query(`delete from items where product_name = 'computer'`, (err, data) => {
-    //     if (err) throw err
-    //     console.log(data)
-    // })
+    connection.query(`delete from items where product_name = 'computer'`, (err, data) => {
+        if (err) throw err
+        console.log(data)
+    })
     connection.query(`select * from items`, (err, data) => {
         if (err) throw err
         obj = data
@@ -49,11 +49,8 @@ const readData = () => {
         for (let i = 0; i < obj.length; i ++) {
         arr = Object.values(obj[i]).join(" ")
         newArr.push(arr)
-        console.log(newArr)
         }
         arr2 = Object.keys(obj[0]).join(" ")
-        console.log(arr)
-        console.log(arr2)
         customer()
     })
 
@@ -74,7 +71,6 @@ inquirer
     // match the id selected just grabbing the numbers at the start
     connection.query(`select * from items where id = ?`, res.itemsList.match(/^\d+/), (err, data) => {
         if (err) throw err
-        num = data[0].id
         console.log(data)
         inquirer
         .prompt([
@@ -84,11 +80,22 @@ inquirer
                 message: 'how many '+ data[0].product_name +'(s) would you like to buy?'
             }
         ]).then( (res) => {
+            let department = data[0].department_name
+            let sales = data[0].price * res.quantity
             if (data[0].stock_quantity-res.quantity >= 0) {
-            connection.query(`update items set stock_quantity = ? where ?`, [data[0].stock_quantity-res.quantity, data[0].stock_quantity], (err, data) => {
+                // deleting more than it should
+            connection.query(`update items set stock_quantity = ? where id = ?`, [data[0].stock_quantity-res.quantity, data[0].id], (err, data) => {
                 if (err) throw err
-                console.log(data)
+                console.log(department)
             })
+            // might need to make a check on this if department does not exist(or maybe make things only allowed to be added to departments(change input from input to list))
+            connection.query(`select * from departments`, (err, data) => {
+                let currentSales = sales + data[0].product_sales
+                console.log(data)
+                console.log(currentSales)
+                connection.query(`update departments set product_sales = ${currentSales} where department_name = '${department}'`)
+            })
+            
         } else {
             console.log('insufficient stock')
         }
